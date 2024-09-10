@@ -1,0 +1,114 @@
+class Cell:
+    def __init__(self, is_mine=False):
+        self.is_mine = is_mine
+        self.is_revealed = False
+        self.is_flagged = False
+        self.adjacent_mines = 0
+
+class GameBoard:
+    
+    NEIGHBORS = ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1))
+    
+    def __init__(self, rows, cols, num_mines):
+        self.rows = rows
+        self.cols = cols
+        self.num_mines = num_mines
+        self.board = self._create_board()
+        self._place_mines()
+        self.is_game_over = False
+        self.is_game_won = False       
+
+    def _create_board(self):
+        '''
+        Create a grid with customizable size
+        '''
+        pass    
+
+    def _place_mines(self):
+        '''
+        Randomly place a defined number of mines on the grid.
+        '''
+        pass
+
+    def reveal_cell(self, row : int, col : int) -> None:
+        '''
+        Reveals the cell at the specified location and updates the game state.
+
+        - Marks the cell as revealed.
+        - Checks if the cell contains a mine and ends the game if it does.
+        - If the cell has no adjacent mines, recursively reveals adjacent cells.
+
+        :param row: The row index of the cell to reveal.
+        :param col: The column index of the cell to reveal.
+        '''
+        # Reveal the cell
+        self.board[row][col].is_revealed = True
+        
+        # Check if there is a mine
+        if self.board[row][col].is_mine:    
+            self.is_game_over = True
+            
+        # Reveal adjacent cells if there are no mines
+        elif self.board[row][col].adjacent_mines == 0:      
+            self._reveal_adjacent_cells(row, col)
+    
+    def _reveal_adjacent_cells(self, row : int, col : int) -> None:
+        '''
+        Automatically reveal neighboring cells if a cell with no adjacent mines is revealed.
+        
+        :param row: The row index of the cell to reveal.
+        :param col: The column index of the cell to reveal.
+        '''   
+        for dx, dy in self.NEIGHBORS:
+            nx, ny = row + dx, col + dy
+            if 0 <= nx < self.rows and 0 <= ny < self.cols:
+                if self.board[nx][ny].is_revealed == False:
+                    self.board[nx][ny].is_revealed = True
+                    
+    def count_near_mines(self, row : int, col : int) -> int:
+        '''
+        Count the number of mine near the cell (LEFT CLICK)
+        
+        :param row: The row index of the cell to reveal.
+        :param col: The column index of the cell to reveal.
+        :return: The number of mine near the cell
+        '''
+        count = 0
+        
+        for dx, dy in self.NEIGHBORS:
+            nx, ny = row + dx, col + dy
+            if 0 <= nx < self.rows and 0 <= ny < self.cols:
+                if self.board[nx][ny].is_mine:
+                    count += 1
+        
+        return count 
+
+    def flag_cell(self, row, col):
+        '''
+        Allow to mark/unmark a suspected mine. (RIGHT CLICK)
+        '''
+        pass
+
+    def check_victory(self):
+        '''
+        Check for victory when all non-mined cells are revealed.
+        '''  
+        pass
+
+    def check_defeat(self):
+        '''
+        End the game if a mine is clicked (game over).
+        '''  
+        pass
+
+# Fonctionnalitées Bonus   
+
+# class Timer:
+#     def __init__(self):
+#         self.time_elapsed = 0
+
+#     def start(self):
+#         pass
+
+#     def stop(self):
+#         pass
