@@ -1,3 +1,5 @@
+import random
+
 class Cell:
     def __init__(self, is_mine=False):
         self.is_mine = is_mine
@@ -18,17 +20,28 @@ class GameBoard:
         self.is_game_over = False
         self.is_game_won = False       
 
-    def _create_board(self):
+    def _create_board(self) -> list:
         '''
         Create a grid with customizable size
         '''
-        pass    
+        board = [[Cell() for _ in range(self.rows)] for _ in range(self.cols)]  
+        return board     
 
-    def _place_mines(self):
+    def _place_mines(self) -> None:
         '''
         Randomly place a defined number of mines on the grid.
         '''
-        pass
+    #   It will store the coordinates of mines as tuples.
+        mine_positions = set() # uniqueness of the positions, faster than a list
+        
+        while len(mine_positions) < self.num_mines:
+            row = random.randint(0, self.rows - 1)
+            col = random.randint(0, self.cols - 1)
+            if (row, col) not in mine_positions: # don't place multiple mines in the same location.
+                mine_positions.add((row, col))
+                self.board[row][col].is_mine = True # the game board as a mine by setting its is_mine attribute to True.
+
+    
 
     def reveal_cell(self, row : int, col : int) -> None:
         '''
@@ -112,3 +125,9 @@ class GameBoard:
 
 #     def stop(self):
 #         pass
+
+game_board = GameBoard(5, 5, 5)  # A 5x5 board with 5 mines
+print(game_board._create_board())
+game_board._place_mines()
+for row in game_board.board:
+    print([cell.is_mine for cell in row])
