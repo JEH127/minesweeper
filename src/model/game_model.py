@@ -31,7 +31,7 @@ class GameBoard:
         '''
         Randomly place a defined number of mines on the grid.
         '''
-    #   It will store the coordinates of mines as tuples.
+        # It will store the coordinates of mines as tuples.
         mine_positions = set() # uniqueness of the positions, faster than a list
         
         while len(mine_positions) < self.num_mines:
@@ -39,9 +39,7 @@ class GameBoard:
             col = random.randint(0, self.cols - 1)
             if (row, col) not in mine_positions: # don't place multiple mines in the same location.
                 mine_positions.add((row, col))
-                self.board[row][col].is_mine = True # the game board as a mine by setting its is_mine attribute to True.
-
-    
+                self.board[row][col].is_mine = True # the game board as a mine by setting its is_mine attribute to True.  
 
     def count_near_mines(self, row : int, col : int) -> int:
         '''
@@ -139,6 +137,7 @@ class GameBoard:
         '''  
         pass
 
+
 # Fonctionnalitées Bonus   
 
 # class Timer:
@@ -150,9 +149,3 @@ class GameBoard:
 
 #     def stop(self):
 #         pass
-
-game_board = GameBoard(5, 5, 5)  # A 5x5 board with 5 mines
-print(game_board._create_board())
-game_board._place_mines()
-for row in game_board.board:
-    print([cell.is_mine for cell in row])
