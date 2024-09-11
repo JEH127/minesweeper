@@ -147,11 +147,11 @@ class GameBoard:
         self.board[row][col].is_flagged = not self.board[row][col].is_flagged
         print(f"Cell at ({row}, {col}) flagged status: {self.board[row][col].is_flagged}")
 
-  
+
     def check_victory(self):
         '''
         Check for victory when all non-mined cells are revealed.
-        '''  
+        '''
         pass
 
 # Fonctionnalitées Bonus   
@@ -167,10 +167,10 @@ class GameBoard:
 #         pass
 
 
-    def print_board(self):
-        for row in self.board:
-            print(' '.join(str(cell) for cell in row))
-        print()
+    # def print_board(self):
+    #     for row in self.board:
+    #         print(' '.join(str(cell) for cell in row))
+    #     print()
 
 game_board = GameBoard(5, 5, 5)  # A 5x5 board with 5 mines
 print(game_board._create_board())
@@ -189,6 +189,8 @@ game_board.print_board()
 
 ### OUTPUTS Flagging cell ###
 '''
+H : Hidden state
+
 H H H H H
 H H H H H
 H H H H H
