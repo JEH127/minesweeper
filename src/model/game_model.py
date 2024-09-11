@@ -127,12 +127,27 @@ class GameBoard:
         except Exception as e:
             print(f"Error while revealing adjacent cells: {e}")
 
+    # def flag_cell(self, row, col):
+    #     '''
+    #     Allow to mark/unmark a suspected mine. (RIGHT CLICK)
+    #     '''
+    #     pass
+
     def flag_cell(self, row, col):
         '''
         Allow to mark/unmark a suspected mine. (RIGHT CLICK)
         '''
-        pass
-   
+        # if the cell at the given row and column has already been revealed
+        if self.board[row][col].is_revealed:
+            print("You cannot flag a revealed cell!")
+            # return => early exit
+            return
+
+        # If the cell is not revealed, this line toggles the is_flagged attribute of the cell
+        self.board[row][col].is_flagged = not self.board[row][col].is_flagged
+        print(f"Cell at ({row}, {col}) flagged status: {self.board[row][col].is_flagged}")
+
+  
     def check_victory(self):
         '''
         Check for victory when all non-mined cells are revealed.
@@ -151,8 +166,48 @@ class GameBoard:
 #     def stop(self):
 #         pass
 
+
+    def print_board(self):
+        for row in self.board:
+            print(' '.join(str(cell) for cell in row))
+        print()
+
 game_board = GameBoard(5, 5, 5)  # A 5x5 board with 5 mines
 print(game_board._create_board())
-game_board._place_mines()
-for row in game_board.board:
-    print([cell.is_mine for cell in row])
+# game_board._place_mines()
+# for row in game_board.board:
+#     print([cell.is_mine for cell in row])
+
+
+# Flagging a cell
+game_board.flag_cell(2, 3)
+game_board.print_board()
+
+# Unflagging the same cell
+game_board.flag_cell(2, 3)
+game_board.print_board()
+
+### OUTPUTS ###
+'''
+H H H H H
+H H H H H
+H H H H H
+H H H H H
+H H H H H
+
+Cell at (2, 3) flagged status: True
+H H H H H
+H H H H H
+H H H F H
+H H H H H
+H H H H H
+
+Cell at (2, 3) flagged status: False
+H H H H H
+H H H H H
+H H H H H
+H H H H H
+H H H H H
+
+'''
+
