@@ -174,9 +174,9 @@ class GameBoard:
 
 game_board = GameBoard(5, 5, 5)  # A 5x5 board with 5 mines
 print(game_board._create_board())
-# game_board._place_mines()
-# for row in game_board.board:
-#     print([cell.is_mine for cell in row])
+game_board._place_mines()
+for row in game_board.board:
+    print([cell.is_mine for cell in row])
 
 
 # Flagging a cell
@@ -187,7 +187,7 @@ game_board.print_board()
 game_board.flag_cell(2, 3)
 game_board.print_board()
 
-### OUTPUTS ###
+### OUTPUTS Flagging cell ###
 '''
 H H H H H
 H H H H H
