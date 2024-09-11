@@ -15,8 +15,9 @@ class GameBoard:
         self.rows = rows
         self.cols = cols
         self.num_mines = num_mines
-        self._create_board()
+        self.board = self._create_board()
         self._place_mines()
+        self._set_adjacent_mines()
         self.is_game_over = False
         self.is_game_won = False       
 
@@ -41,7 +42,7 @@ class GameBoard:
                 mine_positions.add((row, col))
                 self.board[row][col].is_mine = True # the game board as a mine by setting its is_mine attribute to True.  
 
-    def count_near_mines(self, row : int, col : int) -> int:
+    def _count_near_mines(self, row : int, col : int) -> int:
         '''
         Count the number of mine near the cell (LEFT CLICK)
         
@@ -58,8 +59,18 @@ class GameBoard:
                     count += 1
         
         return count 
-      
-    def check_index(self, row : int, col : int) -> bool:
+    
+    def _set_adjacent_mines(self) -> None:
+        '''
+        Set the number of adjacent mines for each cell on the board.
+        '''
+        for row in range(self.rows):
+            for col in range(self.cols):
+                # If the cell is not a mine, calculate the number of nearby mines
+                if not self.board[row][col].is_mine:
+                    self.board[row][col].adjacent_mines = self._count_near_mines(row, col)
+        
+    def _check_index(self, row : int, col : int) -> bool:
         '''
         Check if the index is in the range of the board
 
@@ -69,7 +80,7 @@ class GameBoard:
         '''
         return (0 <= row < self.rows and 0 <= col < self.cols)
                
-    def reveal_cell(self, row : int, col : int) -> None:
+    def _reveal_cell(self, row : int, col : int) -> None:
         '''
         Reveals the cell at the specified location and updates the game state.
 
@@ -81,7 +92,7 @@ class GameBoard:
         :param col: The column index of the cell to reveal.
         '''
         # Check if the index is in the range of the board
-        if self.check_index(row, col):
+        if self._check_index(row, col):
         
             # Reveal the cell
             if not self.board[row][col].is_revealed:
@@ -125,13 +136,13 @@ class GameBoard:
         except Exception as e:
             print(f"Error while revealing adjacent cells: {e}")
 
-    def flag_cell(self, row, col):
+    def _flag_cell(self, row, col):
         '''
         Allow to mark/unmark a suspected mine. (RIGHT CLICK)
         '''
         pass
    
-    def check_victory(self):
+    def _check_victory(self):
         '''
         Check for victory when all non-mined cells are revealed.
         '''  
