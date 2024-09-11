@@ -20,7 +20,7 @@ class GameBoard:
         self.is_game_over = False
         self.is_game_won = False       
 
-    def _create_board(self) -> list:
+    def _create_board(self) -> list[list[Cell]]:
         '''
         Create a grid with customizable size
         '''
@@ -133,22 +133,23 @@ class GameBoard:
     #     '''
     #     pass
 
-    def flag_cell(self, row, col):
+    def flag_cell(self, row : int, col : int) -> None:
         '''
         Allow to mark/unmark a suspected mine. (RIGHT CLICK)
+
+        :param row: The row index of the cell to reveal.
+        :param col: The column index of the cell to reveal.
         '''
         # if the cell at the given row and column has already been revealed
         if self.board[row][col].is_revealed:
-            print("You cannot flag a revealed cell!")
             # return => early exit
             return
 
         # If the cell is not revealed, this line toggles the is_flagged attribute of the cell
         self.board[row][col].is_flagged = not self.board[row][col].is_flagged
-        print(f"Cell at ({row}, {col}) flagged status: {self.board[row][col].is_flagged}")
 
 
-    def check_victory(self):
+    def check_victory(self) -> None:
         '''
         Check for victory when all non-mined cells are revealed.
         '''
@@ -162,7 +163,6 @@ class GameBoard:
         # At this point, all non-mined cells are revealed and the game is won
         # the loops complete without finding any non-mine unrevealed cells
         self.is_game_won = True
-        return True
 
 # Fonctionnalitées Bonus   
 
@@ -181,45 +181,4 @@ class GameBoard:
     #     for row in self.board:
     #         print(' '.join(str(cell) for cell in row))
     #     print()
-
-game_board = GameBoard(5, 5, 5)  # A 5x5 board with 5 mines
-print(game_board._create_board())
-game_board._place_mines()
-for row in game_board.board:
-    print([cell.is_mine for cell in row])
-
-
-# Flagging a cell
-game_board.flag_cell(2, 3)
-game_board.print_board()
-
-# Unflagging the same cell
-game_board.flag_cell(2, 3)
-game_board.print_board()
-
-### OUTPUTS Flagging cell ###
-'''
-H : Hidden state
-
-H H H H H
-H H H H H
-H H H H H
-H H H H H
-H H H H H
-
-Cell at (2, 3) flagged status: True
-H H H H H
-H H H H H
-H H H F H
-H H H H H
-H H H H H
-
-Cell at (2, 3) flagged status: False
-H H H H H
-H H H H H
-H H H H H
-H H H H H
-H H H H H
-
-'''
 
