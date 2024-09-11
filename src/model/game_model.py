@@ -21,7 +21,7 @@ class GameBoard:
         self.is_game_over = False
         self.is_game_won = False       
 
-    def _create_board(self) -> list:
+    def _create_board(self) -> list[list[Cell]]:
         '''
         Create a grid with customizable size
         '''
@@ -136,27 +136,37 @@ class GameBoard:
         except Exception as e:
             print(f"Error while revealing adjacent cells: {e}")
 
-    def _flag_cell(self, row, col):
+
+    def flag_cell(self, row : int, col : int) -> None:
         '''
         Allow to mark/unmark a suspected mine. (RIGHT CLICK)
+
+        :param row: The row index of the cell to reveal.
+        :param col: The column index of the cell to reveal.
         '''
-        pass
-   
-    def _check_victory(self):
+
+        # if the cell at the given row and column has already been revealed
+        if self.board[row][col].is_revealed:
+            # return => early exit
+            return
+
+        # If the cell is not revealed, this line toggles the is_flagged attribute of the cell
+        self.board[row][col].is_flagged = not self.board[row][col].is_flagged
+
+
+    def _check_victory(self) -> None:
         '''
         Check for victory when all non-mined cells are revealed.
-        '''  
-        pass
+        '''
+        for row in range(self.rows):
+            for col in range(self.cols):
+                cell = self.board[row][col]
+               
+                # if the current cell is not a mine and is not revealed
+                if not cell.is_mine and not cell.is_revealed:
+                    return False
+        # At this point, all non-mined cells are revealed and the game is won
+        # the loops complete without finding any non-mine unrevealed cells
+        self.is_game_won = True
 
 
-# Fonctionnalitées Bonus   
-
-# class Timer:
-#     def __init__(self):
-#         self.time_elapsed = 0
-
-#     def start(self):
-#         pass
-
-#     def stop(self):
-#         pass
