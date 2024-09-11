@@ -1,49 +1,55 @@
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QGridLayout, QLabel, QHBoxLayout, QFrame
-)
-from PyQt6.QtCore import Qt, pyqtSignal
+import sys
+from PyQt6.QtWidgets import QApplication, QGridLayout, QPushButton, QWidget, QMessageBox
+from PyQt6.QtCore import QSize
 
-class CellView(QWidget):
-    # Signals to notify the controller of user actions
-    cell_left_clicked = pyqtSignal(int, int)
-    cell_right_clicked = pyqtSignal(int, int)
 
-    def __init__(self, row, col, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.row = row
-        self.col = col
-        self.setFixedSize(30, 30)  # Fixed size for each cell
-        self.setStyleSheet("border: 1px solid black;")  # Border to visualize cells
-        self.setAutoFillBackground(True)
-        self.set_background_color(Qt.gray)
+class GameView(QWidget):
+    def __init__(self, rows: int, cols: int):
+        super().__init__()
 
-        # Handle left and right mouse clicks
-        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.on_right_click)
-        self.mousePressEvent = self.handle_mouse_click
+        self.rows = rows
+        self.cols = cols
+        self.buttons = []
+        
+        self.initUI()
 
-    def handle_mouse_click(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.cell_left_clicked.emit(self.row, self.col)
-        elif event.button() == Qt.MouseButton.RightButton:
-            self.cell_right_clicked.emit(self.row, self.col)
+    def initUI(self):
+        """Initialize the user interface"""
+        self.setWindowTitle("Minesweeper")
+        self.setGeometry(100, 100, 400, 400)
 
-    def on_right_click(self, pos):
-        self.cell_right_clicked.emit(self.row, self.col)
+        # Create a grid layout
+        grid_layout = QGridLayout()
+        self.setLayout(grid_layout)
 
-    def set_background_color(self, color):
-        palette = self.palette()
-        palette.setColor(self.backgroundRole(), color)
-        self.setPalette(palette)
+        # Add buttons to the grid
+        for row in range(self.rows):
+            row_buttons = []
+            for col in range(self.cols):
+                btn = QPushButton("")
+                btn.setFixedSize(QSize(40, 40))  # Set a fixed button size
+                btn.clicked.connect(self.on_click)  # Connect the "clicked" signal to a slot
+                row_buttons.append(btn)
+                grid_layout.addWidget(btn, row, col)
+            self.buttons.append(row_buttons)
 
-    def update_view(self, cell):
-        if cell.is_revealed:
-            if cell.is_mine:
-                self.set_background_color(Qt.red)
-            else:
-                self.set_background_color(Qt.white)
-                self.setToolTip(str(cell.adjacent_mines) if cell.adjacent_mines > 0 else '')
+    def on_click(self):
+        """Handle button click event"""
+        button = self.sender()  # Get the button that triggered the event
+        # Here you could call a controller method to update the view
+        button.setText("X")  # Set "X" as a placeholder for click, to be replaced by actual game logic
+    
+    def show_game_over_message(self, won: bool):
+        """Display a message when the game is over"""
+        msg = QMessageBox()
+        if won:
+            msg.setText("Congratulations! You won!")
         else:
-            self.set_background_color(Qt.gray)
-        if cell.is_flagged:
-            self.setStyleSheet("background-color: yellow; border: 1px solid black;")
+            msg.setText("Sorry! You lost!")
+        msg.exec()
+
+    def reset_board(self):
+        """Reset all the buttons"""
+        for row in self.buttons:
+            for btn in row:
+                btn.setText("")
