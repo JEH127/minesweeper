@@ -152,7 +152,17 @@ class GameBoard:
         '''
         Check for victory when all non-mined cells are revealed.
         '''
-        pass
+        for row in range(self.rows):
+            for col in range(self.cols):
+                cell = self.board[row][col]
+               
+                # if the current cell is not a mine and is not revealed
+                if not cell.is_mine and not cell.is_revealed:
+                    return False
+        # At this point, all non-mined cells are revealed and the game is won
+        # the loops complete without finding any non-mine unrevealed cells
+        self.is_game_won = True
+        return True
 
 # Fonctionnalitées Bonus   
 
