@@ -60,3 +60,43 @@ def test_reveal_adjacent_cells():
     assert board.board[1][1].is_revealed == True
     assert board.board[2][3].is_revealed == True
     assert board.board[3][2].is_revealed == True
+
+
+def test_flag_cell():
+    # Test flagging an unrevealed cell
+    game_board = GameBoard(5, 5, 3)
+    game_board.flag_cell(2, 3)
+    assert game_board.board[2][3].is_flagged == True, "Cell (2, 3) should be flagged."
+
+    # Test unflagging a flagged cell
+    game_board.flag_cell(2, 3)
+    assert game_board.board[2][3].is_flagged == False, "Cell (2, 3) should be unflagged."
+
+    # Test flagging a revealed cell should have no effect
+    game_board.board[2][3].is_revealed = True
+    game_board.flag_cell(2, 3)
+    assert game_board.board[2][3].is_flagged == False, "Revealed cell (2, 3) should not be flagged."
+
+    # Test multiple flag and unflag operations
+    game_board.board[2][3].is_revealed = False  # Reset cell to unrevealed state
+    game_board.flag_cell(2, 3)
+    assert game_board.board[2][3].is_flagged == True, "Cell (2, 3) should be flagged again."
+    game_board.flag_cell(2, 3)
+    assert game_board.board[2][3].is_flagged == False, "Cell (2, 3) should be unflagged again."
+    game_board.flag_cell(2, 3)
+    assert game_board.board[2][3].is_flagged == True, "Cell (2, 3) should be flagged once more."
+
+
+def test_check_victory():
+    # Create a GameBoard instance with 5 rows, 5 columns, and 5 mines
+    game_board = GameBoard(5, 5, 5)
+    
+    # Initially, the game should not be won
+    assert not game_board._check_victory()
+    
+    # Reveal all non-mine cells
+    game_board.reveal_all_non_mine_cells()
+    
+    # Now, the game should be won
+    assert game_board._check_victory()
+    assert game_board.is_game_won
