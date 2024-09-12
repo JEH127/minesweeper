@@ -1,7 +1,7 @@
 import random
 
 class Cell:
-    def __init__(self, is_mine=False):
+    def __init__(self, is_mine=False) -> None:
         self.is_mine = is_mine
         self.is_revealed = False
         self.is_flagged = False
@@ -11,7 +11,7 @@ class GameBoard:
     
     NEIGHBORS = ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1))
     
-    def __init__(self, rows, cols, num_mines):
+    def __init__(self, rows : int, cols : int, num_mines : int) -> None:
         self.rows = rows
         self.cols = cols
         self.num_mines = num_mines
@@ -93,18 +93,18 @@ class GameBoard:
         '''
         # Check if the index is in the range of the board
         if self._check_index(row, col):
-        
-            # Reveal the cell
-            if not self.board[row][col].is_revealed:
-                self.board[row][col].is_revealed = True
-            
-                # Check if there is a mine
-                if self.board[row][col].is_mine:    
-                    self.is_game_over = True
-                    
-                # Reveal adjacent cells if there are no mines
-                elif self.board[row][col].adjacent_mines == 0:      
-                    self._reveal_adjacent_cells(row, col)
+            # Can't reveal if flagged
+            if not self.board[row][col].is_flagged:
+                if not self.board[row][col].is_revealed:
+                    # Reveal adjacent cells if there are no mines
+                    if self.board[row][col].adjacent_mines == 0 and not self.board[row][col].is_mine:    
+                        self._reveal_adjacent_cells(row, col)
+                    else:
+                        # Reveal the cell
+                        self.board[row][col].is_revealed = True
+                    # Check if there is a mine
+                    if self.board[row][col].is_mine:    
+                        self.is_game_over = True    
         else:
             raise IndexError('Index out of range')
                       
@@ -119,15 +119,13 @@ class GameBoard:
             stack = [(row, col)] 
             while stack:
                 r, c = stack.pop()
-
-                if not self.check_index(row, col):
+                if not self._check_index(r, c):
                     continue
 
                 if self.board[r][c].is_revealed:
                     continue
 
                 self.board[r][c].is_revealed = True
-
                 if self.board[r][c].adjacent_mines == 0:
                     for dx, dy in self.NEIGHBORS:
                         nx, ny = r + dx, c + dy
@@ -136,8 +134,7 @@ class GameBoard:
         except Exception as e:
             print(f"Error while revealing adjacent cells: {e}")
 
-
-    def flag_cell(self, row : int, col : int) -> None:
+    def _flag_cell(self, row : int, col : int) -> None:
         '''
         Allow to mark/unmark a suspected mine. (RIGHT CLICK)
 
@@ -152,7 +149,6 @@ class GameBoard:
 
         # If the cell is not revealed, this line toggles the is_flagged attribute of the cell
         self.board[row][col].is_flagged = not self.board[row][col].is_flagged
-
 
     def _check_victory(self) -> None:
         '''

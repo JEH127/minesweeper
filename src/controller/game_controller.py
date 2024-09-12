@@ -1,50 +1,81 @@
+from ..model.game_model import GameBoard
+from ..view.game_view import GameView, CustomButton
+
 class GameController:
 
-    def __init__(self, model, view):
+    def __init__(self, model : GameBoard, view : GameView):
         self.model = model
-        self.view = view  
+        self.view = view
+        
         
         # Connect buttons in the view to their respective handler methods
-        
-        
-        
-        # Exemple de l'appli precedente pour la connection de boutons
-                        
-            # self.view.add_button.clicked.connect(self.add_contact)
-            # self.view.modify_button.clicked.connect(self.modify_contact)
-            # self.view.delete_button.clicked.connect(self.delete_contact)
-            # self.view.search_bar.textChanged.connect(self.search_contacts)
-            # Methods
-
-         # Exemple de l'appli precedente pour la une fonction du controlleur quir épond à un evenement
-         
-            #  def add_contact(self):
-            # """
-            # Handles the addition of a new contact.
-            # Opens a form for the user to input contact details.
-            # If valid data is provided, creates a new Contact object, adds it to the model, and refreshes the contact list.
-            # """
-            # data = self.view.show_contact_form()
-            # if data:
-            #     contact = Contact(**data)
-            #     self.model.add_contact(contact)
-            #     self.load_contacts()
+        self.connect_buttons()
+            
+    def connect_buttons(self) -> None:
+        '''
+        Connect each button in the grid to the custom click signal.
+        '''
+        buttons = self.view.get_buttons()
+        for row in buttons:
+            for btn in row:
+                btn.click_signal.connect(self.handle_button_click)
             
     '''
-    JAMAL 
     After each action (click on a cell), check for defeat or victory by calling the appropriate methods from the model.
     '''
     
-    '''
-    Reacting to a left click on a cell: notify the model to reveal the cell and update the view accordingly
-    '''
+    def handle_button_click(self, click_type : str, button : CustomButton) -> None:
+        '''
+        Handle button click event based on type (left or right).
+        '''
+        if click_type == "left":
+            self.model._reveal_cell(button.row, button.col)
+        elif click_type == "right":
+            self.model._flag_cell(button.row, button.col)
+            
+        self.update_view()
+            
+    def new_game(self):    
+        '''
+        Initialize a new game according to the chosen difficulty (call the model's methods to generate a new grid).
+        '''
+        pass
     
-    
-    '''
-    Reacting to a right click on a cell: place (or remove) a flag, update the remaining mines count, and update the view accordingly.
-    '''
-    
-    '''
-    Initialize a new game according to the chosen difficulty (call the model's methods to generate a new grid).
-    '''
-    
+    def update_view(self) -> None:
+        """
+        Update the view based on the model.
+        This method updates each button to reflect the state of the corresponding cell in the model.
+        """
+        # TODO , getter et setter model
+        for row in range(self.model.rows):
+            for col in range(self.model.cols):
+                cell = self.model.board[row][col]
+                button = self.view.get_buttons()[row][col]
+                
+                # Update button appearance based on flagged status
+                if cell.is_flagged:
+                    self.view.flag_cell(True, button)
+                else:
+                    self.view.flag_cell(False, button)
+                    
+                # Update button appearance based on reveal status
+                if cell.is_revealed:
+                    # SPIRITS
+                    if cell.is_mine:
+                        self.view.reveal_cell('mine', button)
+                    elif cell.adjacent_mines == 0:
+                        # FLOOR
+                        self.view.reveal_cell('safe', button)
+                    else:
+                        self.view.reveal_cell('number', button, cell.adjacent_mines)
+                else:
+                    button.setText("")  # Clear text if the cell is not revealed
+
+        # game over or win check
+        self.model._check_victory()
+        if self.model.is_game_won:
+            self.view.show_game_over_message(won=True)
+        elif self.model.is_game_over:
+            self.view.show_game_over_message(won=False)
+        
+            
