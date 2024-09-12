@@ -7,7 +7,7 @@ class GameController:
         
         self.model = GameBoard()
         self.view = GameView(self.model.get_board_settings())
-        self.view
+        self.view.show_message('intro')
         # Connect buttons in the view to their respective handler methods
         self.connect_buttons()
             
@@ -18,6 +18,7 @@ class GameController:
         '''
         self.view.difficulty_selector.currentIndexChanged.connect(self.on_difficulty_changed)
         self.view.new_game_button.clicked.connect(self.on_new_game_clicked)
+        self.view.help_button.clicked.connect(self.on_help_clicked)
         
         buttons = self.view.get_buttons()
         for row in buttons:
@@ -48,6 +49,12 @@ class GameController:
         Handle the click event for the "New Game" button.
         '''
         self.new_game()
+        
+    def on_help_clicked(self) -> None:
+        '''
+        Handle the click event for the "Help?" button.
+        '''
+        self.view.show_message('help')
         
     def new_game(self) -> None:    
         '''
@@ -118,6 +125,6 @@ class GameController:
             self.view.play_sound('victory')
             self.view.show_message('victory')
         elif self.model.is_game_over:
-            self.view.play_sound('game_over')
+            
             self.view.show_message('game_over')
             

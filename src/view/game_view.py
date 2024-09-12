@@ -74,6 +74,30 @@ class GameView(QWidget):
         self.mine_counter.setFont(QFont(self.font_2))
         self.mine_counter.setAlignment(Qt.AlignmentFlag.AlignCenter)
         top_bar.addWidget(self.mine_counter)
+        
+        # Help Button
+        self.help_button = QPushButton("Help?")
+        self.help_button.setFont(QFont(self.font_2))
+        self.help_button.setStyleSheet("""
+                                        QPushButton {
+                                            background-color: #6E6E6E;
+                                            color: black;
+                                            border: 2px solid white;
+                                            border-radius: 4px;
+                                            padding: 10px;
+                                        }
+
+                                        QPushButton:hover {
+                                            background-color: black;
+                                            color: white;
+                                        }
+
+                                        QPushButton:pressed {
+                                            background-color: black; /* Une teinte plus sombre pour l'effet de pression */
+                                            color: white;
+                                        }
+                                        """)
+        top_bar.addWidget(self.help_button)
 
         # Spacer to push difficulty selector to the right (Claude)
         top_bar.addStretch(1)
@@ -82,24 +106,24 @@ class GameView(QWidget):
         self.new_game_button = QPushButton("New Game")
         self.new_game_button.setFont(QFont(self.font_2))
         self.new_game_button.setStyleSheet("""
-                                            QPushButton {
-                                                background-color: #4A0000; /* Rouge sang foncé */
-                                                color: white;
-                                                border: 2px solid black;
-                                                border-radius: 4px;
-                                                padding: 10px;
-                                            }
+                                        QPushButton {
+                                            background-color: #4A0000; /* Rouge sang foncé */
+                                            color: white;
+                                            border: 2px solid black;
+                                            border-radius: 4px;
+                                            padding: 10px;
+                                        }
 
-                                            QPushButton:hover {
-                                                background-color: #6A0000; /* Une teinte plus claire pour l'effet de survol */
-                                                color: white;
-                                            }
+                                        QPushButton:hover {
+                                            background-color: #6A0000; /* Une teinte plus claire pour l'effet de survol */
+                                            color: white;
+                                        }
 
-                                            QPushButton:pressed {
-                                                background-color: #3A0000; /* Une teinte plus sombre pour l'effet de pression */
-                                                color: white;
-                                            }
-                                            """)
+                                        QPushButton:pressed {
+                                            background-color: #3A0000; /* Une teinte plus sombre pour l'effet de pression */
+                                            color: white;
+                                        }
+                                        """)
         top_bar.addWidget(self.new_game_button)
 
         # Difficulty selector
@@ -140,16 +164,15 @@ class GameView(QWidget):
             row_buttons = []
             for col in range(board_settings[1]):
                 btn = CustomButton(row, col, "")
-                btn.setFixedSize(QSize(self.button_size, self.button_size))  # Set a fixed button size
+                btn.setFixedSize(QSize(self.button_size, self.button_size)) 
                 btn.setStyleSheet("background-color: #1a1a1a;\
                                   border: 2 px solid white;\
                                   border-radius: 4px;")
-                btn.clicked.connect(self.on_click)  # Connect the "clicked" signal to a slot
+                btn.clicked.connect(self.on_click) 
                 row_buttons.append(btn)
                 grid_layout.addWidget(btn, row, col)
             self.buttons.append(row_buttons)
 
-        # claude
         # Add grid layout to main layout
         main_layout.addLayout(grid_layout)
         
@@ -199,7 +222,7 @@ class GameView(QWidget):
 
     def show_message(self, type : str) -> None:
         '''
-        Display a message when the game is over with an image
+        Display a message with an image
         '''
         # Create a custom dialog
         dialog = QDialog(self)
@@ -212,6 +235,12 @@ class GameView(QWidget):
             case 'game_over':
                 image_path = st.GAME_STATUS[0]
                 dialog.setWindowTitle("Fate Sealed")
+            case 'intro':
+                image_path = st.GAME_STATUS[2]
+                dialog.setWindowTitle("Why?")
+            case 'help':
+                image_path = st.GAME_STATUS[3]
+                dialog.setWindowTitle("Help?")
             
         # Create label for the image
         image_label = QLabel()

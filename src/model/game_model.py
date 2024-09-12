@@ -11,7 +11,7 @@ class GameBoard:
     
     NEIGHBORS = ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1))
     
-    def __init__(self, difficulty : str = 'Medium') -> None:
+    def __init__(self, difficulty : str = 'Easy') -> None:
         self.difficulty = difficulty
         self.rows, self.cols, self.num_mines = self.set_difficulty(self.difficulty)
         self.board = self._create_board()

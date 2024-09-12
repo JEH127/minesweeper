@@ -46,7 +46,9 @@ SPIRIT_IMAGES = [
 
 GAME_STATUS = [ 
     os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'game_state', 'game_over.png'),
-    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'game_state', 'victory.png')
+    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'game_state', 'victory.png'),
+    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'intro', '1.png'),
+    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'intro', '2.png')
 ]
 
 # Choose a random image from a list
