@@ -1,6 +1,5 @@
 from ..model.game_model import GameBoard
 from ..view.game_view import GameView, CustomButton
-import settings as st
 
 class GameController:
 
@@ -8,9 +7,8 @@ class GameController:
         
         self.model = GameBoard()
         self.view = GameView(self.model.get_board_settings())
-        
+        self.view
         # Connect buttons in the view to their respective handler methods
-        self.view.difficulty_selector.currentIndexChanged.connect(self.on_difficulty_changed)
         self.connect_buttons()
             
     def connect_buttons(self) -> None:
@@ -19,6 +17,8 @@ class GameController:
         Connect each button in the grid to the custom click signal.
         '''
         self.view.difficulty_selector.currentIndexChanged.connect(self.on_difficulty_changed)
+        self.view.new_game_button.clicked.connect(self.on_new_game_clicked)
+        
         buttons = self.view.get_buttons()
         for row in buttons:
             for btn in row:
@@ -28,25 +28,49 @@ class GameController:
         '''
         Handle button click event based on type (left or right).
         '''
-        if click_type == "left":
-            self.model._reveal_cell(button.row, button.col)
-        elif click_type == "right":
-            self.model._flag_cell(button.row, button.col)
-            
-        self.update_view()
-            
+        if not self.model.is_game_over and not self.model.is_game_won:
+            if click_type == "left":
+                self.model._reveal_cell(button.row, button.col)
+            elif click_type == "right":
+                self.model._flag_cell(button.row, button.col)
+                
+            self.update_view()
+
+    def on_difficulty_changed(self) -> None:
+        '''
+        Handle the change in difficulty selection.
+        :param index: The index of the selected item in the combo box.
+        '''
+        self.model.difficulty = self.view.difficulty_selector.currentText()
+        
+    def on_new_game_clicked(self) -> None:
+        '''
+        Handle the click event for the "New Game" button.
+        '''
+        self.new_game()
+        
     def new_game(self) -> None:    
         '''
         Initialize a new game according to the chosen difficulty (call the model's methods to generate a new grid).
         '''
-        pass
-    
+        difficulty = self.model.get_difficulty()
+        
+        # Clean up old view and model
+        if hasattr(self, 'view') and self.view:
+            # Mark the old view for deletion
+            self.view.deleteLater()  
+            
+        # Create new model and view instances  
+        self.model = GameBoard(difficulty)
+        self.view = GameView(self.model.get_board_settings())
+        # Reconnect the buttons
+        self.connect_buttons()
+        
     def update_view(self) -> None:
         """
         Update the view based on the model.
         This method updates each button to reflect the state of the corresponding cell in the model.
         """
-        # TODO , getter et setter model
         for row in range(self.model.rows):
             for col in range(self.model.cols):
                 cell = self.model.board[row][col]
@@ -89,15 +113,11 @@ class GameController:
         Check if the game is over or won.
         Update the view with appropriate messages.
         '''
+        self.model._check_victory()
         if self.model.is_game_won:
-            self.view.show_game_over_message(won=True)
+            self.view.play_sound('victory')
+            self.view.show_message('victory')
         elif self.model.is_game_over:
-            self.view.show_game_over_message(won=False)
-
-    def on_difficulty_changed(self, index: int) -> None:
-        '''
-        Handle the change in difficulty selection.
-        :param index: The index of the selected item in the combo box.
-        '''
-        difficulty = self.view.difficulty_selector.currentText()
-        print(f"Difficulty changed to: {difficulty}")
+            self.view.play_sound('game_over')
+            self.view.show_message('game_over')
+            

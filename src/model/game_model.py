@@ -11,7 +11,7 @@ class GameBoard:
     
     NEIGHBORS = ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1))
     
-    def __init__(self, difficulty : str = 'medium') -> None:
+    def __init__(self, difficulty : str = 'Medium') -> None:
         self.difficulty = difficulty
         self.rows, self.cols, self.num_mines = self.set_difficulty(self.difficulty)
         self.board = self._create_board()
@@ -23,12 +23,12 @@ class GameBoard:
         self.count_flags = 0
         
     def set_difficulty(self, difficulty):
-        if difficulty == 'easy':
+        if difficulty == 'Easy':
             return 8, 8, 10
-        elif difficulty == 'medium':
+        elif difficulty == 'Medium':
             return 16, 16, 40
-        elif difficulty == 'hard':
-            return 24, 24, 99
+        elif difficulty == 'Hard':
+            return 20, 20, 75
         
     def _create_board(self) -> list[list[Cell]]:
         '''
@@ -85,7 +85,7 @@ class GameBoard:
 
         :param row: The row index of the cell to reveal.
         :param col: The column index of the cell to reveal.
-        :raises IndexError: If the indices are out of range.
+        :return: If the indices are out of range.
         '''
         return (0 <= row < self.rows and 0 <= col < self.cols)
                
@@ -151,7 +151,6 @@ class GameBoard:
         :param row: The row index of the cell to reveal.
         :param col: The column index of the cell to reveal.
         '''
-        print(self.count_flags)
         # If the cell at the given row and column has already been revealed
         if self.board[row][col].is_revealed:
             # return => early exit
@@ -188,11 +187,20 @@ class GameBoard:
     def get_count_mines(self) -> int:
         '''
         Get the total number of mines on the board.
+        :return: The total number of mines on the board
         '''
 
         return self.count_mines
+
+    def get_difficulty(self) -> str:
+        '''
+        Get the difficulty
+        :return: return the difficulty
+        '''
+
+        return self.difficulty
     
-    def get_board_settings(self) -> tuple[int, int, int]:
+    def get_board_settings(self) -> tuple[int, int, int, str]:
         '''
             Returns the settings of the game board.
 
@@ -201,4 +209,4 @@ class GameBoard:
                     - The number of columns (cols)
                     - The number of mines (num_mines)
         '''
-        return self.rows, self.cols, self.num_mines
+        return self.rows, self.cols, self.num_mines, self.difficulty

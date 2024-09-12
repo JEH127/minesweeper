@@ -5,7 +5,8 @@ import random
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 # Fonts Path
-FONT_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'fonts', 'Creepster', 'Creepster-Regular.ttf')
+FONT_PATH_1 = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'fonts', 'Creepster', 'Creepster-Regular.ttf')
+FONT_PATH_2 = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'fonts', 'Cutive_Mono', 'CutiveMono-Regular.ttf')
 
 # Music Path
 MUSIC_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'musics', 'ES_The Haunted Concert Hall - Luella Gren.mp3')
@@ -13,9 +14,10 @@ MUSIC_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'musics', 'E
 # Sounds Path
 GAME_OVER_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'sounds', 'game_over.mp3')
 VICTORY_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'sounds', 'victory.mp3')
+SIGIL_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'sounds', 'sigil.mp3')
 
 FLOOR_SOUNDS = [
-    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'sounds', 'floor', f'{i}.wav')
+    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'sounds', 'floor', f'{i}.mp3')
     for i in range(1, 5)
 ]
 
@@ -24,15 +26,6 @@ NUMBERS_SOUNDS = [
     for i in range(1, 4)
 ]
 
-FLOOR_IMAGES = [
-    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'floors', f'{i}.png')
-    for i in range(1, 13)
-]
-
-FLOOR_IMAGES = [
-    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'floors', f'{i}.png')
-    for i in range(1, 13)
-]
 # Images paths
 ICON_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'icon.png')
 

@@ -1,9 +1,8 @@
 from PyQt6.QtWidgets import QGridLayout, QPushButton, QWidget, QDialog, QVBoxLayout, QLabel, QHBoxLayout, QComboBox
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, QUrl
 from PyQt6.QtGui import QPixmap, QIcon, QFont, QFontDatabase
-from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput, QSoundEffect
+from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 import settings as st
-import sys
 
 class CustomButton(QPushButton):
     # Define a custom signal to emit click type and button reference
@@ -30,27 +29,36 @@ class CustomButton(QPushButton):
             self.click_signal.emit("right", self)  # Emit signal with click type and button
 
 class GameView(QWidget):
-    def __init__(self, board_settings : tuple[int, int, int]) -> None:
+    def __init__(self, board_settings : tuple[int, int, int, str]) -> None:
         super().__init__()
 
         self.buttons = []        
         self.initUI(board_settings)
         self.show()
 
-    def initUI(self, board_settings : tuple[int, int, int]) -> None:
+    def initUI(self, board_settings : tuple[int, int, int, str]) -> None:
         '''
         Initialize the user interface
         '''
         self.setWindowTitle("Haunted Manor")
-        self.setGeometry(100, 100, 400, 400)
+        self.setFixedSize(700, 700)
         self.setWindowIcon(QIcon(st.ICON_PATH))
+        self.center_window()
+        # Set the size of the buttons/icons based on the difficulty
+        self.button_size = min(600 // board_settings[0], 600 // board_settings[1])
+        self.icon_size = self.button_size
+        self.font_1_size = self.button_size - 10
         
-        # Set up the font
-        self.font_id = QFontDatabase.addApplicationFont(st.FONT_PATH)
+        
+        # Set up the fonts
+        self.font_id = QFontDatabase.addApplicationFont(st.FONT_PATH_1)
         self.font_family = QFontDatabase.applicationFontFamilies(self.font_id)[0]
-        self.font = QFont(self.font_family, 20)
+        self.font = QFont(self.font_family, self.font_1_size)
+        
+        self.font_id = QFontDatabase.addApplicationFont(st.FONT_PATH_2)
+        self.font_family = QFontDatabase.applicationFontFamilies(self.font_id)[0]
         self.font_2 = QFont(self.font_family, 12)
-
+        self.font_2.setWeight(QFont.Weight.Bold)
 
         main_layout = QVBoxLayout()
         main_layout.setSpacing(10)
@@ -69,7 +77,30 @@ class GameView(QWidget):
 
         # Spacer to push difficulty selector to the right (Claude)
         top_bar.addStretch(1)
+        
+        # New Game Button
+        self.new_game_button = QPushButton("New Game")
+        self.new_game_button.setFont(QFont(self.font_2))
+        self.new_game_button.setStyleSheet("""
+                                            QPushButton {
+                                                background-color: #4A0000; /* Rouge sang foncé */
+                                                color: white;
+                                                border: 2px solid black;
+                                                border-radius: 4px;
+                                                padding: 10px;
+                                            }
 
+                                            QPushButton:hover {
+                                                background-color: #6A0000; /* Une teinte plus claire pour l'effet de survol */
+                                                color: white;
+                                            }
+
+                                            QPushButton:pressed {
+                                                background-color: #3A0000; /* Une teinte plus sombre pour l'effet de pression */
+                                                color: white;
+                                            }
+                                            """)
+        top_bar.addWidget(self.new_game_button)
 
         # Difficulty selector
         difficulty_label = QLabel("Difficulty:")
@@ -80,7 +111,7 @@ class GameView(QWidget):
         self.difficulty_selector.addItems(["Easy", "Medium", "Hard"])
         self.difficulty_selector.setFont(QFont(self.font_2))
         self.difficulty_selector.setStyleSheet("QComboBox { background-color: transparent; color: white; }")
-        
+        self.difficulty_selector.setCurrentText(board_settings[3])
         top_bar.addWidget(self.difficulty_selector)
 
         # Add top bar to main layout
@@ -91,7 +122,7 @@ class GameView(QWidget):
         self.audio_output = QAudioOutput()
         self.player.setAudioOutput(self.audio_output)
         self.player.setSource(QUrl.fromLocalFile(st.MUSIC_PATH))
-        self.audio_output.setVolume(10)
+        self.audio_output.setVolume(50)
         self.player.play()
         
         # Set Sounds effects
@@ -103,15 +134,16 @@ class GameView(QWidget):
         # Create a grid layout
         grid_layout = QGridLayout()
         grid_layout.setSpacing(2)
-        # before claude
-        # self.setLayout(grid_layout)
 
         # Add buttons to the grid
         for row in range(board_settings[0]):
             row_buttons = []
             for col in range(board_settings[1]):
                 btn = CustomButton(row, col, "")
-                btn.setFixedSize(QSize(50, 50))  # Set a fixed button size
+                btn.setFixedSize(QSize(self.button_size, self.button_size))  # Set a fixed button size
+                btn.setStyleSheet("background-color: #1a1a1a;\
+                                  border: 2 px solid white;\
+                                  border-radius: 4px;")
                 btn.clicked.connect(self.on_click)  # Connect the "clicked" signal to a slot
                 row_buttons.append(btn)
                 grid_layout.addWidget(btn, row, col)
@@ -121,21 +153,11 @@ class GameView(QWidget):
         # Add grid layout to main layout
         main_layout.addLayout(grid_layout)
         
-
     def on_click(self) -> None:
         '''
         Handle button click event
         '''
         button = self.sender()  # Get the button that triggered the event
-
-    
-    # def reset_board(self) -> None:
-    #     '''
-    #     Reset all the buttons
-    #     '''
-    #     for row in self.buttons:
-    #         for btn in row:
-    #             btn.setText("")
     
     def get_buttons(self) -> list[list[CustomButton]]:
         '''
@@ -149,55 +171,57 @@ class GameView(QWidget):
             if type == 'mine':
                 # SPIRIT
                 button.setIcon(QIcon(st.get_random_image('spirits')))
-                button.setIconSize(QSize(45, 45))
+                button.setIconSize(QSize(self.icon_size, self.icon_size))
                 print(st.get_random_image('spirits'))
-                self.play_sound('game_over')
             elif type == 'safe':
                 # FLOOR
                 button.setIcon(QIcon(st.get_random_image('floors')))
-                button.setIconSize(QSize(45, 45))
-                
+                button.setIconSize(QSize(self.icon_size, self.icon_size))
+                self.play_sound('floor')
             else:
                 # NUMBER
                 button.setText(str(adjacent_mines))
                 button.setFont(self.font)
+                self.play_sound(str(adjacent_mines))
             button.revealed = True
     
     def flag_cell(self, flag : bool, button : CustomButton) -> None:
         # Put an icon only if the button is not already flagged
         if not button.flagged and flag: 
             button.setIcon(QIcon(st.get_random_image('sigils')))
-            button.setIconSize(QSize(45, 45))
+            button.setIconSize(QSize(self.icon_size, self.icon_size))
             button.flagged = True 
+            self.play_sound('sigil')
         # Remove the icon only if the button is already flagged
         elif button.flagged and not flag:
             button.setIcon(QIcon())
             button.flagged = False
 
-    def show_game_over_message(self, won: bool) -> None:
+    def show_message(self, type : str) -> None:
         '''
         Display a message when the game is over with an image
         '''
         # Create a custom dialog
         dialog = QDialog(self)
-        dialog.setWindowTitle("Fate Sealed")
-
         layout = QVBoxLayout()
-        message_label = QLabel()
-        if won:
-            image_path = st.GAME_STATUS[1]
-        else:
-            image_path = st.GAME_STATUS[0]
+        
+        match type:
+            case 'victory':
+                image_path = st.GAME_STATUS[1]
+                dialog.setWindowTitle("Evil Banished")
+            case 'game_over':
+                image_path = st.GAME_STATUS[0]
+                dialog.setWindowTitle("Fate Sealed")
             
         # Create label for the image
         image_label = QLabel()
         pixmap = QPixmap(image_path)
         image_label.setPixmap(pixmap)
         image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        
-        layout.addWidget(message_label)
+    
         layout.addWidget(image_label)
         dialog.setLayout(layout)
+        dialog.resize(800, 400)
         dialog.exec()
 
     def update_view_mine_counter(self, mine_counter : int) -> None:
@@ -206,20 +230,58 @@ class GameView(QWidget):
         '''
         self.mine_counter.setText(f"Mines: {mine_counter}")
         
-    def play_sound(self, sound_type : str) -> None:
+    def play_sound(self, sound_type: str) -> None:
+        """
+        Play a sound based on the provided sound type.
+
+        This function plays a sound corresponding to the specified `sound_type`. If `sound_type`
+        matches one of the predefined cases, the corresponding sound file is played. If `sound_type`
+        does not match any predefined case, a default sound (associated with '3') is played.
+
+        :param sound_type: A string representing the type of sound to play. It can be one of the following:
+                        - 'game_over': Plays the game over sound.
+                        - 'victory': Plays the victory sound.
+                        - 'floor': Plays a random floor sound.
+                        - '1': Plays the sound associated with the number 1.
+                        - '2': Plays the sound associated with the number 2.
+                        - '3': Plays the sound associated with the number 3.
+        :return: None. This function does not return any value.
+        
+        :raises: This function does not explicitly raise any exceptions. If an invalid `sound_type` is provided,
+                it defaults to playing the sound associated with '3'.
+        """
         match sound_type:
             case 'game_over':
                 file_path = st.GAME_OVER_PATH
             case 'victory':
                 file_path = st.VICTORY_PATH
+            case 'sigil':
+                file_path = st.SIGIL_PATH
             case 'floor':
                 file_path = st.get_random_image('floor_sound')
-            case 'number_1':
+            case '1':
                 file_path = st.NUMBERS_SOUNDS[0]
-            case 'number_2' :
+            case '2':
                 file_path = st.NUMBERS_SOUNDS[1]
-            case 'number_3' :
+            case '3':
                 file_path = st.NUMBERS_SOUNDS[2]
-        
+            case _:
+                file_path = st.NUMBERS_SOUNDS[2]  # Default to '3' sound if `sound_type` is unrecognized
+                
+        # Set the source of the player to the chosen file path and play the sound
         self.player_2.setSource(QUrl.fromLocalFile(file_path))
         self.player_2.play()
+     
+    def center_window(self) -> None:
+        '''
+        Center the window on the screen
+        '''
+        screen_geometry = self.screen().geometry()
+        window_geometry = self.geometry()
+
+        # Calculate the position to center the window
+        x = (screen_geometry.width() - window_geometry.width()) // 2
+        y = (screen_geometry.height() - window_geometry.height()) // 2
+
+        # Move the window to the calculated position
+        self.move(x, y)
