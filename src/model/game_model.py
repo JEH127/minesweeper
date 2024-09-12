@@ -19,7 +19,8 @@ class GameBoard:
         self._place_mines()
         self._set_adjacent_mines()
         self.is_game_over = False
-        self.is_game_won = False       
+        self.is_game_won = False  
+        self.count_mines = self.num_mines
 
     def _create_board(self) -> list[list[Cell]]:
         '''
@@ -137,6 +138,7 @@ class GameBoard:
     def _flag_cell(self, row : int, col : int) -> None:
         '''
         Allow to mark/unmark a suspected mine. (RIGHT CLICK)
+        Increment and decrement my counter of suspected mines
 
         :param row: The row index of the cell to reveal.
         :param col: The column index of the cell to reveal.
@@ -149,6 +151,13 @@ class GameBoard:
 
         # If the cell is not revealed, this line toggles the is_flagged attribute of the cell
         self.board[row][col].is_flagged = not self.board[row][col].is_flagged
+
+        if self.board[row][col].is_flagged and self.count_mines > 0:
+            self.count_mines -= 1
+
+        elif not self.board[row][col].is_flagged:
+            self.count_mines += 1
+        
 
     def _check_victory(self) -> None:
         '''
@@ -166,3 +175,9 @@ class GameBoard:
         self.is_game_won = True
 
 
+    def get_count_mines(self) -> int:
+        '''
+        Get the total number of mines on the board.
+        '''
+
+        return self.count_mines
