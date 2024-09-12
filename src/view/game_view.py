@@ -1,8 +1,9 @@
 from PyQt6.QtWidgets import QGridLayout, QPushButton, QWidget, QDialog, QVBoxLayout, QLabel, QHBoxLayout, QComboBox
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, QUrl
 from PyQt6.QtGui import QPixmap, QIcon, QFont, QFontDatabase
-from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
+from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput, QSoundEffect
 import settings as st
+import sys
 
 class CustomButton(QPushButton):
     # Define a custom signal to emit click type and button reference
@@ -34,9 +35,7 @@ class GameView(QWidget):
 
         self.rows = rows
         self.cols = cols
-        self.buttons = []
-
-        
+        self.buttons = []        
         self.initUI(count_mines)
 
     def initUI(self, count_mines : int) -> None:
@@ -82,7 +81,6 @@ class GameView(QWidget):
         self.difficulty_selector = QComboBox()
         self.difficulty_selector.addItems(["Easy", "Medium", "Hard"])
         self.difficulty_selector.setFont(QFont(self.font_2))
-        # claude
         self.difficulty_selector.setStyleSheet("QComboBox { background-color: transparent; color: white; }")
         
         top_bar.addWidget(self.difficulty_selector)
@@ -90,19 +88,22 @@ class GameView(QWidget):
         # Add top bar to main layout
         main_layout.addLayout(top_bar)
 
-
+        # Set up the background music
+        self.player = QMediaPlayer()
+        self.audio_output = QAudioOutput()
+        self.player.setAudioOutput(self.audio_output)
+        self.player.setSource(QUrl.fromLocalFile(st.MUSIC_PATH))
+        self.audio_output.setVolume(10)
+        self.player.play()
         
-        # # Set up the background music
-        # self.player = QMediaPlayer()
-        # self.audio_output = QAudioOutput()
-        # self.player.setAudioOutput(self.audio_output)
-        # self.player.setSource(QUrl.fromLocalFile(st.MUSIC_PATH))
-        # self.audio_output.setVolume(10)
-        # self.player.play()
-    
+        # Set Sounds effects
+        self.player_2 = QMediaPlayer()
+        self.audio_output_2 = QAudioOutput() 
+        self.player_2.setAudioOutput(self.audio_output)
+        self.audio_output_2.setVolume(10)
+ 
         # Create a grid layout
         grid_layout = QGridLayout()
-        # claude
         grid_layout.setSpacing(2)
         # before claude
         # self.setLayout(grid_layout)
@@ -160,10 +161,12 @@ class GameView(QWidget):
                 button.setIcon(QIcon(st.get_random_image('spirits')))
                 button.setIconSize(QSize(45, 45))
                 print(st.get_random_image('spirits'))
+                self.play_sound('game_over')
             elif type == 'safe':
                 # FLOOR
                 button.setIcon(QIcon(st.get_random_image('floors')))
                 button.setIconSize(QSize(45, 45))
+                
             else:
                 # NUMBER
                 button.setText(str(adjacent_mines))
@@ -220,3 +223,21 @@ class GameView(QWidget):
         Update the mine counter label
         '''
         self.mine_counter.setText(f"Mines: {mine_counter}")
+        
+    def play_sound(self, sound_type : str) -> None:
+        match sound_type:
+            case 'game_over':
+                file_path = st.GAME_OVER_PATH
+            case 'victory':
+                file_path = st.VICTORY_PATH
+            case 'floor':
+                file_path = st.get_random_image('floor_sound')
+            case 'number_1':
+                file_path = st.NUMBERS_SOUNDS[0]
+            case 'number_2' :
+                file_path = st.NUMBERS_SOUNDS[1]
+            case 'number_3' :
+                file_path = st.NUMBERS_SOUNDS[2]
+        
+        self.player_2.setSource(QUrl.fromLocalFile(file_path))
+        self.player_2.play()

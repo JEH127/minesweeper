@@ -17,6 +17,29 @@ FONT_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'fonts', 'Cre
 # Music Path
 MUSIC_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'musics', 'ES_The Haunted Concert Hall - Luella Gren.mp3')
 
+# Sounds Path
+GAME_OVER_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'sounds', 'game_over.mp3')
+VICTORY_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'sounds', 'victory.mp3')
+
+FLOOR_SOUNDS = [
+    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'sounds', 'floor', f'{i}.wav')
+    for i in range(1, 5)
+]
+
+NUMBERS_SOUNDS = [
+    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'sounds', 'number', f'{i}.wav')
+    for i in range(1, 4)
+]
+
+FLOOR_IMAGES = [
+    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'floors', f'{i}.png')
+    for i in range(1, 13)
+]
+
+FLOOR_IMAGES = [
+    os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'floors', f'{i}.png')
+    for i in range(1, 13)
+]
 # Images paths
 ICON_PATH = os.path.join(BASE_DIR, 'minesweeper', 'src', 'assets', 'images', 'icon.png')
 
@@ -52,5 +75,7 @@ def get_random_image(image_list : str) -> str:
             list = FLOOR_IMAGES
         case 'sigils':
             list = SIGIL_IMAGES
-        
+        case 'floor_sound' :
+            list = FLOOR_SOUNDS
+            
     return random.choice(list)
