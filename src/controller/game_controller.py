@@ -10,12 +10,15 @@ class GameController:
         self.view = GameView(self.model.get_board_settings())
         
         # Connect buttons in the view to their respective handler methods
+        self.view.difficulty_selector.currentIndexChanged.connect(self.on_difficulty_changed)
         self.connect_buttons()
             
     def connect_buttons(self) -> None:
         '''
+        Conenct the buttons and combo Box
         Connect each button in the grid to the custom click signal.
         '''
+        self.view.difficulty_selector.currentIndexChanged.connect(self.on_difficulty_changed)
         buttons = self.view.get_buttons()
         for row in buttons:
             for btn in row:
@@ -32,7 +35,7 @@ class GameController:
             
         self.update_view()
             
-    def new_game(self):    
+    def new_game(self) -> None:    
         '''
         Initialize a new game according to the chosen difficulty (call the model's methods to generate a new grid).
         '''
@@ -81,7 +84,7 @@ class GameController:
         '''
         self.view.update_view_mine_counter(self.model.get_count_mines())
 
-    def game_over_or_win_check(self)  -> None:
+    def game_over_or_win_check(self) -> None:
         '''
         Check if the game is over or won.
         Update the view with appropriate messages.
@@ -90,4 +93,11 @@ class GameController:
             self.view.show_game_over_message(won=True)
         elif self.model.is_game_over:
             self.view.show_game_over_message(won=False)
-        
+
+    def on_difficulty_changed(self, index: int) -> None:
+        '''
+        Handle the change in difficulty selection.
+        :param index: The index of the selected item in the combo box.
+        '''
+        difficulty = self.view.difficulty_selector.currentText()
+        print(f"Difficulty changed to: {difficulty}")

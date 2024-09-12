@@ -20,6 +20,7 @@ class GameBoard:
         self.is_game_over = False
         self.is_game_won = False  
         self.count_mines = self.num_mines
+        self.count_flags = 0
         
     def set_difficulty(self, difficulty):
         if difficulty == 'easy':
@@ -150,20 +151,24 @@ class GameBoard:
         :param row: The row index of the cell to reveal.
         :param col: The column index of the cell to reveal.
         '''
-
-        # if the cell at the given row and column has already been revealed
+        print(self.count_flags)
+        # If the cell at the given row and column has already been revealed
         if self.board[row][col].is_revealed:
             # return => early exit
             return
-
-        # If the cell is not revealed, this line toggles the is_flagged attribute of the cell
+        
+        # Player can't flag if he is out of flag.
+        if not self.board[row][col].is_flagged and self.count_flags == self.num_mines:
+            return
+        # If the cell is not revealed, this line toggles the is_flagged attribute of the cell  
         self.board[row][col].is_flagged = not self.board[row][col].is_flagged
-
+        # Mine counter can't go negative
         if self.board[row][col].is_flagged and self.count_mines > 0:
             self.count_mines -= 1
-
+            self.count_flags += 1
         elif not self.board[row][col].is_flagged:
             self.count_mines += 1
+            self.count_flags -= 1
         
     def _check_victory(self) -> None:
         '''

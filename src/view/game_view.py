@@ -53,7 +53,6 @@ class GameView(QWidget):
 
 
         main_layout = QVBoxLayout()
-        # add by claude
         main_layout.setSpacing(10)
         main_layout.setContentsMargins(10, 10, 10, 10)
 
@@ -121,6 +120,7 @@ class GameView(QWidget):
         # claude
         # Add grid layout to main layout
         main_layout.addLayout(grid_layout)
+        
 
     def on_click(self) -> None:
         '''
