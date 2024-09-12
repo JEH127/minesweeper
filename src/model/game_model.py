@@ -1,7 +1,7 @@
 import random
 
 class Cell:
-    def __init__(self, is_mine=False) -> None:
+    def __init__(self, is_mine = False) -> None:
         self.is_mine = is_mine
         self.is_revealed = False
         self.is_flagged = False
@@ -11,17 +11,24 @@ class GameBoard:
     
     NEIGHBORS = ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1))
     
-    def __init__(self, rows : int, cols : int, num_mines : int) -> None:
-        self.rows = rows
-        self.cols = cols
-        self.num_mines = num_mines
+    def __init__(self, difficulty : str = 'medium') -> None:
+        self.difficulty = difficulty
+        self.rows, self.cols, self.num_mines = self.set_difficulty(self.difficulty)
         self.board = self._create_board()
         self._place_mines()
         self._set_adjacent_mines()
         self.is_game_over = False
         self.is_game_won = False  
         self.count_mines = self.num_mines
-
+        
+    def set_difficulty(self, difficulty):
+        if difficulty == 'easy':
+            return 8, 8, 10
+        elif difficulty == 'medium':
+            return 16, 16, 40
+        elif difficulty == 'hard':
+            return 24, 24, 99
+        
     def _create_board(self) -> list[list[Cell]]:
         '''
         Create a grid with customizable size
@@ -158,7 +165,6 @@ class GameBoard:
         elif not self.board[row][col].is_flagged:
             self.count_mines += 1
         
-
     def _check_victory(self) -> None:
         '''
         Check for victory when all non-mined cells are revealed.
@@ -174,10 +180,20 @@ class GameBoard:
         # the loops complete without finding any non-mine unrevealed cells
         self.is_game_won = True
 
-
     def get_count_mines(self) -> int:
         '''
         Get the total number of mines on the board.
         '''
 
         return self.count_mines
+    
+    def get_board_settings(self) -> tuple[int, int, int]:
+        '''
+            Returns the settings of the game board.
+
+            :return: A tuple containing three integers:
+                    - The number of rows (rows)
+                    - The number of columns (cols)
+                    - The number of mines (num_mines)
+        '''
+        return self.rows, self.cols, self.num_mines

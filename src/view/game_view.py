@@ -30,15 +30,14 @@ class CustomButton(QPushButton):
             self.click_signal.emit("right", self)  # Emit signal with click type and button
 
 class GameView(QWidget):
-    def __init__(self, rows: int, cols: int, count_mines : int) -> None:
+    def __init__(self, board_settings : tuple[int, int, int]) -> None:
         super().__init__()
 
-        self.rows = rows
-        self.cols = cols
         self.buttons = []        
-        self.initUI(count_mines)
+        self.initUI(board_settings)
+        self.show()
 
-    def initUI(self, count_mines : int) -> None:
+    def initUI(self, board_settings : tuple[int, int, int]) -> None:
         '''
         Initialize the user interface
         '''
@@ -64,7 +63,7 @@ class GameView(QWidget):
         top_bar = QHBoxLayout()
         
         # Mine counter
-        self.mine_counter = QLabel(f"Mines: {count_mines}")
+        self.mine_counter = QLabel(f"Mines: {board_settings[2]}")
         self.mine_counter.setFont(QFont(self.font_2))
         self.mine_counter.setAlignment(Qt.AlignmentFlag.AlignCenter)
         top_bar.addWidget(self.mine_counter)
@@ -109,9 +108,9 @@ class GameView(QWidget):
         # self.setLayout(grid_layout)
 
         # Add buttons to the grid
-        for row in range(self.rows):
+        for row in range(board_settings[0]):
             row_buttons = []
-            for col in range(self.cols):
+            for col in range(board_settings[1]):
                 btn = CustomButton(row, col, "")
                 btn.setFixedSize(QSize(50, 50))  # Set a fixed button size
                 btn.clicked.connect(self.on_click)  # Connect the "clicked" signal to a slot
@@ -144,15 +143,6 @@ class GameView(QWidget):
         '''
         return self.buttons
     
-    def update_view(self) -> None:
-        '''
-        Update the view based on the model
-        '''
-        for row in range(self.model.rows):
-            for col in range(self.model.cols):
-                value = self.model.get_cell(row, col)
-                self.buttons[row][col].setText(str(value))
-
     def reveal_cell(self, type : str, button : CustomButton, adjacent_mines : int = None) -> None:
         # Put an icon only if the button is not already revealed
         if not button.revealed:
@@ -192,30 +182,22 @@ class GameView(QWidget):
         dialog = QDialog(self)
         dialog.setWindowTitle("Fate Sealed")
 
-        # Create layout for the dialog
         layout = QVBoxLayout()
-
-        # Create label for the text
         message_label = QLabel()
         if won:
             image_path = st.GAME_STATUS[1]
         else:
             image_path = st.GAME_STATUS[0]
-
+            
         # Create label for the image
         image_label = QLabel()
         pixmap = QPixmap(image_path)
         image_label.setPixmap(pixmap)
         image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Add labels to the layout
+        
         layout.addWidget(message_label)
         layout.addWidget(image_label)
-
-        # Set the layout to the dialog
         dialog.setLayout(layout)
-
-        # Show the dialog
         dialog.exec()
 
     def update_view_mine_counter(self, mine_counter : int) -> None:

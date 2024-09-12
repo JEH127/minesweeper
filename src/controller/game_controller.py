@@ -1,12 +1,13 @@
 from ..model.game_model import GameBoard
 from ..view.game_view import GameView, CustomButton
+import settings as st
 
 class GameController:
 
-    def __init__(self, model : GameBoard, view : GameView):
-        self.model = model
-        self.view = view
+    def __init__(self):
         
+        self.model = GameBoard()
+        self.view = GameView(self.model.get_board_settings())
         
         # Connect buttons in the view to their respective handler methods
         self.connect_buttons()
@@ -20,10 +21,6 @@ class GameController:
             for btn in row:
                 btn.click_signal.connect(self.handle_button_click)
             
-    '''
-    After each action (click on a cell), check for defeat or victory by calling the appropriate methods from the model.
-    '''
-    
     def handle_button_click(self, click_type : str, button : CustomButton) -> None:
         '''
         Handle button click event based on type (left or right).
@@ -77,7 +74,6 @@ class GameController:
         
         # mine_counter updated in view
         self.update_mine_counter()
-
 
     def update_mine_counter(self) -> None:
         '''

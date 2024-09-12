@@ -1,13 +1,6 @@
 import os
 import random
 
-# Difficulty Levels
-LEVELS = [
-    ("Easy", 8, 10),
-    ("Medium", 16, 40),
-    ("Hard", 24, 99)
-]
-
 # Base path for assets
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
