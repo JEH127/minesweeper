@@ -9,8 +9,8 @@ from src.controller.game_controller import GameController
 def main():
     app = QApplication(sys.argv)
 
-    model = GameBoard(5, 5,1)
-    view = GameView(5, 5)
+    model = GameBoard(10, 10,1)
+    view = GameView(10, 10, 1)
     controller = GameController(model, view)
     
     # model = GameBoard()

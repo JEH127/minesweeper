@@ -71,11 +71,27 @@ class GameController:
                 else:
                     button.setText("")  # Clear text if the cell is not revealed
 
+    
         # game over or win check
-        self.model._check_victory()
+        self.game_over_or_win_check()
+        
+        # mine_counter updated in view
+        self.update_mine_counter()
+
+
+    def update_mine_counter(self) -> None:
+        '''
+        Update the number of remaining mines in the view.
+        '''
+        self.view.update_view_mine_counter(self.model.get_count_mines())
+
+    def game_over_or_win_check(self)  -> None:
+        '''
+        Check if the game is over or won.
+        Update the view with appropriate messages.
+        '''
         if self.model.is_game_won:
             self.view.show_game_over_message(won=True)
         elif self.model.is_game_over:
             self.view.show_game_over_message(won=False)
         
-            

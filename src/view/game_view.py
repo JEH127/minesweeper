@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QGridLayout, QPushButton, QWidget, QDialog, QVBoxLayout, QLabel
+from PyQt6.QtWidgets import QGridLayout, QPushButton, QWidget, QDialog, QVBoxLayout, QLabel, QHBoxLayout, QComboBox
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, QUrl
 from PyQt6.QtGui import QPixmap, QIcon, QFont, QFontDatabase
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
@@ -17,6 +17,8 @@ class CustomButton(QPushButton):
         self.revealed = revealed
         self.flagged = flagged
 
+
+
     def mousePressEvent(self, event : Qt.MouseButton) -> None:
         '''
         Override mousePressEvent to differentiate between left and right clicks.
@@ -27,16 +29,17 @@ class CustomButton(QPushButton):
             self.click_signal.emit("right", self)  # Emit signal with click type and button
 
 class GameView(QWidget):
-    def __init__(self, rows: int, cols: int) -> None:
+    def __init__(self, rows: int, cols: int, count_mines : int) -> None:
         super().__init__()
 
         self.rows = rows
         self.cols = cols
         self.buttons = []
-        
-        self.initUI()
 
-    def initUI(self) -> None:
+        
+        self.initUI(count_mines)
+
+    def initUI(self, count_mines : int) -> None:
         '''
         Initialize the user interface
         '''
@@ -48,6 +51,46 @@ class GameView(QWidget):
         self.font_id = QFontDatabase.addApplicationFont(st.FONT_PATH)
         self.font_family = QFontDatabase.applicationFontFamilies(self.font_id)[0]
         self.font = QFont(self.font_family, 20)
+        self.font_2 = QFont(self.font_family, 12)
+
+
+        main_layout = QVBoxLayout()
+        # add by claude
+        main_layout.setSpacing(10)
+        main_layout.setContentsMargins(10, 10, 10, 10)
+
+        self.setLayout(main_layout)
+
+        # Top bar with mine counter and difficulty selector
+        top_bar = QHBoxLayout()
+        
+        # Mine counter
+        self.mine_counter = QLabel(f"Mines: {count_mines}")
+        self.mine_counter.setFont(QFont(self.font_2))
+        self.mine_counter.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        top_bar.addWidget(self.mine_counter)
+
+        # Spacer to push difficulty selector to the right (Claude)
+        top_bar.addStretch(1)
+
+
+        # Difficulty selector
+        difficulty_label = QLabel("Difficulty:")
+        difficulty_label.setFont(QFont(self.font_2))
+        top_bar.addWidget(difficulty_label)
+
+        self.difficulty_selector = QComboBox()
+        self.difficulty_selector.addItems(["Easy", "Medium", "Hard"])
+        self.difficulty_selector.setFont(QFont(self.font_2))
+        # claude
+        self.difficulty_selector.setStyleSheet("QComboBox { background-color: transparent; color: white; }")
+        
+        top_bar.addWidget(self.difficulty_selector)
+
+        # Add top bar to main layout
+        main_layout.addLayout(top_bar)
+
+
         
         # # Set up the background music
         # self.player = QMediaPlayer()
@@ -59,7 +102,10 @@ class GameView(QWidget):
     
         # Create a grid layout
         grid_layout = QGridLayout()
-        self.setLayout(grid_layout)
+        # claude
+        grid_layout.setSpacing(2)
+        # before claude
+        # self.setLayout(grid_layout)
 
         # Add buttons to the grid
         for row in range(self.rows):
@@ -72,22 +118,16 @@ class GameView(QWidget):
                 grid_layout.addWidget(btn, row, col)
             self.buttons.append(row_buttons)
 
+        # claude
+        # Add grid layout to main layout
+        main_layout.addLayout(grid_layout)
+
     def on_click(self) -> None:
         '''
         Handle button click event
         '''
         button = self.sender()  # Get the button that triggered the event
 
-    # def show_game_over_message(self, won: bool) -> None:
-    #     '''
-    #     Display a message when the game is over
-    #     '''
-    #     msg = QMessageBox()
-    #     if won:
-    #         msg.setText("Congratulations! You won!")
-    #     else:
-    #         msg.setText("Sorry! You lost!")
-    #     msg.exec()
     
     # def reset_board(self) -> None:
     #     '''
@@ -174,3 +214,9 @@ class GameView(QWidget):
 
         # Show the dialog
         dialog.exec()
+
+    def update_view_mine_counter(self, mine_counter : int) -> None:
+        '''
+        Update the mine counter label
+        '''
+        self.mine_counter.setText(f"Mines: {mine_counter}")
