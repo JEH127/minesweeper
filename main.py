@@ -9,13 +9,16 @@ from src.controller.game_controller import GameController
 def main():
     app = QApplication(sys.argv)
 
-    model = GameBoard(4, 4, 2)
-    view = GameView(4, 4)
+    model = GameBoard(5, 5, 1)
+    view = GameView(5, 5)
     controller = GameController(model, view)
-
+    
+    # model = GameBoard()
+    # view = GameView()
+    # controller = GameController(model, view)
+    
     view.show()
     sys.exit(app.exec())
-
 
 if __name__ == '__main__':
     main()
