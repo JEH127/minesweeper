@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication
-import pyqtgraph as pg
+# import pyqtgraph as pg
 from src.view.game_view import GameView
 from src.model.game_model import Cell, GameBoard
 from src.controller.game_controller import GameController
@@ -9,7 +9,7 @@ from src.controller.game_controller import GameController
 def main():
     app = QApplication(sys.argv)
 
-    model = GameBoard(5, 5, 1)
+    model = GameBoard(5, 5,1)
     view = GameView(5, 5)
     controller = GameController(model, view)
     
