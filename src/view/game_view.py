@@ -54,7 +54,7 @@ class GameView(QWidget):
 
 
         main_layout = QVBoxLayout()
-        # add by claude
+        
         main_layout.setSpacing(10)
         main_layout.setContentsMargins(10, 10, 10, 10)
 
@@ -69,7 +69,7 @@ class GameView(QWidget):
         self.mine_counter.setAlignment(Qt.AlignmentFlag.AlignCenter)
         top_bar.addWidget(self.mine_counter)
 
-        # Spacer to push difficulty selector to the right (Claude)
+        # Spacer to push difficulty selector to the right
         top_bar.addStretch(1)
 
 
@@ -105,7 +105,7 @@ class GameView(QWidget):
         # Create a grid layout
         grid_layout = QGridLayout()
         grid_layout.setSpacing(2)
-        # before claude
+        # before
         # self.setLayout(grid_layout)
 
         # Add buttons to the grid
@@ -119,7 +119,7 @@ class GameView(QWidget):
                 grid_layout.addWidget(btn, row, col)
             self.buttons.append(row_buttons)
 
-        # claude
+       
         # Add grid layout to main layout
         main_layout.addLayout(grid_layout)
 
