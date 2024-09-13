@@ -125,6 +125,6 @@ class GameController:
             self.view.play_sound('victory')
             self.view.show_message('victory')
         elif self.model.is_game_over:
-            
+            self.view.play_sound('game_over')
             self.view.show_message('game_over')
             

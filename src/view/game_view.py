@@ -146,14 +146,14 @@ class GameView(QWidget):
         self.audio_output = QAudioOutput()
         self.player.setAudioOutput(self.audio_output)
         self.player.setSource(QUrl.fromLocalFile(st.MUSIC_PATH))
-        self.audio_output.setVolume(50)
+        self.audio_output.setVolume(0.2)
         self.player.play()
         
         # Set Sounds effects
         self.player_2 = QMediaPlayer()
         self.audio_output_2 = QAudioOutput() 
-        self.player_2.setAudioOutput(self.audio_output)
-        self.audio_output_2.setVolume(10)
+        self.player_2.setAudioOutput(self.audio_output_2)
+        self.audio_output_2.setVolume(0.5)
  
         # Create a grid layout
         grid_layout = QGridLayout()
@@ -200,12 +200,12 @@ class GameView(QWidget):
                 # FLOOR
                 button.setIcon(QIcon(st.get_random_image('floors')))
                 button.setIconSize(QSize(self.icon_size, self.icon_size))
-                self.play_sound('floor')
+                # self.play_sound('floor')
             else:
                 # NUMBER
                 button.setText(str(adjacent_mines))
                 button.setFont(self.font)
-                self.play_sound(str(adjacent_mines))
+                # self.play_sound(str(adjacent_mines))
             button.revealed = True
     
     def flag_cell(self, flag : bool, button : CustomButton) -> None:
