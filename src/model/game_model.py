@@ -1,7 +1,7 @@
 import random
 
 class Cell:
-    def __init__(self, is_mine=False) -> None:
+    def __init__(self, is_mine = False) -> None:
         self.is_mine = is_mine
         self.is_revealed = False
         self.is_flagged = False
@@ -11,17 +11,25 @@ class GameBoard:
     
     NEIGHBORS = ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1))
     
-    def __init__(self, rows : int, cols : int, num_mines : int) -> None:
-        self.rows = rows
-        self.cols = cols
-        self.num_mines = num_mines
+    def __init__(self, difficulty : str = 'Easy') -> None:
+        self.difficulty = difficulty
+        self.rows, self.cols, self.num_mines = self.set_difficulty(self.difficulty)
         self.board = self._create_board()
         self._place_mines()
         self._set_adjacent_mines()
         self.is_game_over = False
         self.is_game_won = False  
         self.count_mines = self.num_mines
-
+        self.count_flags = 0
+        
+    def set_difficulty(self, difficulty):
+        if difficulty == 'Easy':
+            return 8, 8, 10
+        elif difficulty == 'Medium':
+            return 16, 16, 40
+        elif difficulty == 'Hard':
+            return 20, 20, 75
+        
     def _create_board(self) -> list[list[Cell]]:
         '''
         Create a grid with customizable size
@@ -77,7 +85,7 @@ class GameBoard:
 
         :param row: The row index of the cell to reveal.
         :param col: The column index of the cell to reveal.
-        :raises IndexError: If the indices are out of range.
+        :return: If the indices are out of range.
         '''
         return (0 <= row < self.rows and 0 <= col < self.cols)
                
@@ -143,22 +151,24 @@ class GameBoard:
         :param row: The row index of the cell to reveal.
         :param col: The column index of the cell to reveal.
         '''
-
-        # if the cell at the given row and column has already been revealed
+        # If the cell at the given row and column has already been revealed
         if self.board[row][col].is_revealed:
             # return => early exit
             return
-
-        # If the cell is not revealed, this line toggles the is_flagged attribute of the cell
+        
+        # Player can't flag if he is out of flag.
+        if not self.board[row][col].is_flagged and self.count_flags == self.num_mines:
+            return
+        # If the cell is not revealed, this line toggles the is_flagged attribute of the cell  
         self.board[row][col].is_flagged = not self.board[row][col].is_flagged
-
+        # Mine counter can't go negative
         if self.board[row][col].is_flagged and self.count_mines > 0:
             self.count_mines -= 1
-
+            self.count_flags += 1
         elif not self.board[row][col].is_flagged:
             self.count_mines += 1
+            self.count_flags -= 1
         
-
     def _check_victory(self) -> None:
         '''
         Check for victory when all non-mined cells are revealed.
@@ -174,10 +184,29 @@ class GameBoard:
         # the loops complete without finding any non-mine unrevealed cells
         self.is_game_won = True
 
-
     def get_count_mines(self) -> int:
         '''
         Get the total number of mines on the board.
+        :return: The total number of mines on the board
         '''
 
         return self.count_mines
+
+    def get_difficulty(self) -> str:
+        '''
+        Get the difficulty
+        :return: return the difficulty
+        '''
+
+        return self.difficulty
+    
+    def get_board_settings(self) -> tuple[int, int, int, str]:
+        '''
+            Returns the settings of the game board.
+
+            :return: A tuple containing three integers:
+                    - The number of rows (rows)
+                    - The number of columns (cols)
+                    - The number of mines (num_mines)
+        '''
+        return self.rows, self.cols, self.num_mines, self.difficulty
