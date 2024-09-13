@@ -57,11 +57,11 @@ These images were purchased or licensed separately and **cannot** be redistribut
 The fonts used in this project are provided by Google Fonts and are licensed under the SIL Open Font License (OFL), which allows for free use, modification, and redistribution. However, the **fonts themselves are not covered by the Creative Commons license** applied to the rest of this project.
 
 The fonts used include:
-- Creepster (licensed under OFL) - [Google Fonts Link](https://fonts.google.com/specimen/Creepster)
-- Cutive Mono (licensed under OFL) - [Google Fonts Link](https://fonts.google.com/specimen/Cutive+Mono)
+- Creepster (licensed under OFL) - https://fonts.google.com/specimen/Creepster
+- Cutive Mono (licensed under OFL) - https://fonts.google.com/specimen/Cutive+Mono
 
 If you wish to use these fonts, you can download them or reference them directly from Google Fonts, and ensure compliance with the SIL Open Font License.
 
 Please ensure that any use, redistribution, or modification of the aforementioned files complies with the terms of their respective licenses.
 
-For more information about this project, visit [Haunted Manor](https://github.com/JEH127/minesweeper) or contact the authors at [JEH127](https://github.com/JEH127) [Dagzz](https://github.com/Dagzz).
+For more information about this project, visit Haunted Manor at https://github.com/JEH127/minesweeper or contact the authors at JEH127 at https://github.com/JEH127 and Dagzz at https://github.com/Dagzz.

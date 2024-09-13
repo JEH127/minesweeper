@@ -141,13 +141,13 @@ class GameView(QWidget):
         # Add top bar to main layout
         main_layout.addLayout(top_bar)
 
-        # # Set up the background music
-        self.player = QMediaPlayer()
-        self.audio_output = QAudioOutput()
-        self.player.setAudioOutput(self.audio_output)
-        self.player.setSource(QUrl.fromLocalFile(st.MUSIC_PATH))
-        self.audio_output.setVolume(0.2)
-        self.player.play()
+        # # # Set up the background music
+        # self.player = QMediaPlayer()
+        # self.audio_output = QAudioOutput()
+        # self.player.setAudioOutput(self.audio_output)
+        # self.player.setSource(QUrl.fromLocalFile(st.MUSIC_PATH))
+        # self.audio_output.setVolume(0.2)
+        # self.player.play()
         
         # Set Sounds effects
         self.player_2 = QMediaPlayer()
