@@ -99,7 +99,7 @@ class GameView(QWidget):
                                         """)
         top_bar.addWidget(self.help_button)
 
-        # Spacer to push difficulty selector to the right (Claude)
+        # Spacer to push difficulty selector to the right
         top_bar.addStretch(1)
         
         # New Game Button
