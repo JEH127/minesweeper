@@ -13,7 +13,7 @@ class GameBoard:
     
     def __init__(self, difficulty : str = 'Easy') -> None:
         self.difficulty = difficulty
-        self.rows, self.cols, self.num_mines = self.set_difficulty(self.difficulty)
+        self.rows, self.cols, self.num_mines = self.set_difficulty(self.difficulty) 
         self.board = self._create_board()
         self._place_mines()
         self._set_adjacent_mines()
