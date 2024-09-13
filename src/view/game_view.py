@@ -141,7 +141,7 @@ class GameView(QWidget):
         # Add top bar to main layout
         main_layout.addLayout(top_bar)
 
-        # Set up the background music
+        # # Set up the background music
         self.player = QMediaPlayer()
         self.audio_output = QAudioOutput()
         self.player.setAudioOutput(self.audio_output)
@@ -174,14 +174,13 @@ class GameView(QWidget):
             self.buttons.append(row_buttons)
 
         # Add grid layout to main layout
-        main_layout.addLayout(grid_layout)
-        
+        main_layout.addLayout(grid_layout)     
     def on_click(self) -> None:
         '''
         Handle button click event
         '''
-        button = self.sender()  # Get the button that triggered the event
-    
+        button = self.sender()  # Get the button that triggered the event 
+          
     def get_buttons(self) -> list[list[CustomButton]]:
         '''
         Return all buttons as a 2D list
@@ -190,7 +189,8 @@ class GameView(QWidget):
     
     def reveal_cell(self, type : str, button : CustomButton, adjacent_mines : int = None) -> None:
         # Put an icon only if the button is not already revealed
-        if not button.revealed:
+        
+        if not button.revealed and not button.flagged:
             if type == 'mine':
                 # SPIRIT
                 button.setIcon(QIcon(st.get_random_image('spirits')))
